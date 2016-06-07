@@ -16,6 +16,10 @@ var BTTask = require('Base').extend({
     generateUniqueIdsRecursive: function(id) {
         return this.id = id || 0;
     },
+    registerRecursive: function(register) {
+        register[this.id] = this;
+        return register;
+    },
 });
 
 BTTask.RUNNING = 0;
@@ -23,4 +27,4 @@ BTTask.SUCCESS = 1;
 BTTask.FAILURE = 2;
 BTTask.WAITING = 3; // parent task finish without result, waiting for children to finish
 
-module.exports = Task;
+module.exports = BTTask;

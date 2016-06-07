@@ -6,7 +6,7 @@ module.exports = require('BTTask').extend({
     },
 
     task: undefined,
-    
+
     start: function(executor, context) {
         executor.start(this.task, context);
     },
@@ -22,7 +22,12 @@ module.exports = require('BTTask').extend({
     hashCode: function() { return 17 * this.base() + this.task.hashCode(); },
 
     generateUniqueIdsRecursive: function(id) {
-        this.base();
+        this.base(id);
         return this.task.generateUniqueIdsRecursive(this.id + 1);
     },
+
+    registerRecursive: function(register) {
+        this.base(register);
+        return this.task.registerRecursive(register);
+    }
 });

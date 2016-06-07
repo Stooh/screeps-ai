@@ -5,7 +5,7 @@ var Helpers = {};
 
 
 ///// DISTANCE
-Helper.getDistance = function(a,b) {
+Helpers.getDistance = function(a,b) {
     var ap = _.has(a, 'pos') ? a.pos : a;
     var bp = _.has(b, 'pos') ? b.pos : b;
 
@@ -22,7 +22,7 @@ Helper.getDistance = function(a,b) {
 
 ///// MEMORY
 Helpers.createMemory = function(label, base, createCallback) {
-    var memory = _.isUndefined(base) ? base.memory : Memory;
+    var memory = _.isUndefined(base) ? Memory : base.memory;
 
     // sanity check
     if(!_.isObject(memory))
@@ -102,7 +102,7 @@ Helpers.garbageCollection =  function() {
 
 
 // convert {x,y} to integer value
-const POS_MUL = Contants.ROOM_SIZE;
+const POS_MUL = Constants.ROOM_SIZE;
 
 Helpers.posToInt = function(pos) {
     return pos.x * POS_MUL + pos.y;

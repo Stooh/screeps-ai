@@ -1,5 +1,6 @@
 var Blackboard = require('Blackboard');
 var BTTree = require('BTTree');
+var BTExecutor = require('BTExecutor');
 var BTRepeat = require('BTRepeat');
 var BTTaskCreepSay = require('BTTaskCreepSay');
 
@@ -19,27 +20,23 @@ function createBehaviourTrees() {
 
 function MainBrain() {
     this.executor = new BTExecutor();
-    this.blackBoard = new BlackBoard(createBehaviourTrees());
+    this.blackBoard = new Blackboard(createBehaviourTrees());
 
     // We start a tree
     // TEST
     this.blackBoard.startBehaviourTree('helloWorld');
 }
 
-function runBehaviourTrees(bb) {
-    var bb = this.blackBoard;
+function runBehaviourTrees(bb, executor) {
     var contexts = bb.getBehaviourTreeContexts();
-    var bts = bb.getBehaviourTrees();
-    var executor = this.executor;
-    var l = contexts.length;
-    for(var i = 0; i < l; ++i) {
-        executor.tick(contexts[i]);
-    }
+    contexts.forEach(function(context) {
+        executor.tick(context);
+    });
 }
 
 MainBrain.prototype.run = function() {
     // TODO run all brains (word/room/unit)
-    runBehaviourTrees();
+    runBehaviourTrees(this.blackBoard, this.executor);
 }
 
 module.exports = MainBrain;

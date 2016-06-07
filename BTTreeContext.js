@@ -10,7 +10,7 @@ module.exports = require('Base').extend({
         this.nodesMemory = Helpers.createMemory('nodes', this);
         this.sharedMemory = Helpers.createMemory('shared', this);
 
-        init();
+        this.init();
     },
 
     bb: undefined,
@@ -22,7 +22,7 @@ module.exports = require('Base').extend({
     init: function() {
         // check if we're recoving an existing state
         // or if we need to init a new one
-        var memory = this.treeMemory;
+        var memory = this.memory;
 
         var treeHashCode = this.tree.hashCode;
         var memTreeHashCode = memory.treeHashCode;
@@ -39,6 +39,9 @@ module.exports = require('Base').extend({
                 Log.crash('No tree hashcode, but we got node memories');
             if(Object.keys(this.sharedMemory).length > 0)
                 Log.crash('No tree hashcode, but we got shared memories');
+
+            // We put root as starting node
+            this.activeNodesMemory.push(this.tree.root.id);
         } else if(treeHashCode != memTreeHashCode) {
             Log.crash('Wrong tree hashcode: ' + treeHashCode + ' vs ' + memTreeHashCode);
         }

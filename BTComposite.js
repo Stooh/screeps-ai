@@ -35,4 +35,12 @@ module.exports = require('BTTask').extend({
         // affect id to all sub tasks
         return this.tasks.reduce(_generateUniqueId, id);
     },
+
+    registerRecursive: function(register) {
+        this.base(register);
+
+        this.tasks.forEach(function(task) {task.registerRecursive(register)});
+
+        return register;
+    },
 });

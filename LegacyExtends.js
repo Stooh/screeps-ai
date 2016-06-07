@@ -1,5 +1,5 @@
 var Constants = require('Constants');
-var Helper = require('Helper');
+var Helpers = require('Helpers');
 var Log = require('Log');
 
 
@@ -16,13 +16,13 @@ function createMem(go) {
 };
 
 
-GameObject.prototype.getCreateMem = function() {
+RoomObject.prototype.getCreateMem = function() {
     return _.isUndefined(this.memory) ?
         createMem(this)
         : this.memory;
 };
 
-GameObject.prototype.getExistingMem = function() {
+RoomObject.prototype.getExistingMem = function() {
     return this.memory;
 };
 
@@ -39,12 +39,12 @@ GameObject.prototype.getExistingMem = function() {
 ////
 
 
-GameObject.prototype.memGet = function(label, defaultValue) {
+RoomObject.prototype.memGet = function(label, defaultValue) {
     var mem = this.getExistingMem();
     return _.isObject(mem) && _.has(mem, label) ? mem['label'] : defaultValue;
 };
 
-GameObject.prototype.memSet = function(label, value) {
+RoomObject.prototype.memSet = function(label, value) {
     return this.getCreateMem()[label] = value;
 };
 //////////////////
@@ -82,11 +82,11 @@ GameObject.prototype.memSet = function(label, value) {
 
 // DISTANCE
 RoomObject.prototype.getDistance = function(other) {
-    return Helper.getDistance(this, other);
+    return Helpers.getDistance(this, other);
 };
 
 RoomPosition.prototype.getDistance = function(other) {
-    return Helper.getDistance(this, other);
+    return Helpers.getDistance(this, other);
 };
 //////////////////
 

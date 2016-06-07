@@ -1,5 +1,6 @@
 var Log = require('Log');
 var Helpers = require('Helpers');
+var BTTreeContext = require('BTTreeContext');
 
 function Blackboard(behaviourTrees) {
     this.behaviourTrees = behaviourTrees;
@@ -13,7 +14,7 @@ function Blackboard(behaviourTrees) {
     this.btContexts = mem.btContextsMemory.map(this.initBehaviourTreeContext, this);
 };
 
-BlackBoard.initBehaviourTreeContext = function(btContextMem) {
+Blackboard.prototype.initBehaviourTreeContext = function(btContextMem) {
     var treeTitle = btContextMem.treeName;
     var tree = this.behaviourTrees[treeTitle];
     if(!tree)
@@ -21,8 +22,6 @@ BlackBoard.initBehaviourTreeContext = function(btContextMem) {
 
     return new BTTreeContext(this, btContextMem, tree);
 };
-
-Blackboard.instance = new Blackboard();
 
 Blackboard.prototype.getGlobalMemory = function() {
     return this.memory.global;
@@ -36,10 +35,14 @@ Blackboard.prototype.getBehaviourTreeContextsMemory = function() {
     return this.btContextsMemory;
 };
 
+Blackboard.prototype.getBehaviourTreeContexts = function() {
+    return this.btContexts;
+};
+
 Blackboard.prototype.startBehaviourTree = function(treeName) {
-    var tree = this.behaviourTrees[treeTitle];
+    var tree = this.behaviourTrees[treeName];
     if(!tree)
-        Log.crash('No tree for label ' + treeTitle);
+        Log.crash('No tree for label ' + treeName);
 
     var mem = {};
     this.btContextsMemory.push(mem);

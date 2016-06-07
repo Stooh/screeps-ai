@@ -1,8 +1,8 @@
 var LegacyExtends = require('LegacyExtends');
-var HelperFunctions = require('HelperFunctions');
+var Helpers = require('Helpers');
 var MainBrain = require('MainBrain');
 
-var MainBrain mainBrain = new MainBrain();
+var mainBrain = new MainBrain();
 
 module.exports.loop = function () {
     mainBrain.run();
