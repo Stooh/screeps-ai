@@ -21,6 +21,10 @@ module.exports = require('BTTask').extend({
 
     hashCode: function() { return 17 * this.base() + this.task.hashCode(); },
 
+    childFinish: function(executor, context, child, success) {
+        return success ? this.SUCCESS : this.FAILURE;
+    },
+
     generateUniqueIdsRecursive: function(id) {
         this.base(id);
         return this.task.generateUniqueIdsRecursive(this.id + 1);
@@ -29,5 +33,5 @@ module.exports = require('BTTask').extend({
     registerRecursive: function(register) {
         this.base(register);
         return this.task.registerRecursive(register);
-    }
+    },
 });
