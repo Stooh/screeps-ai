@@ -21,11 +21,9 @@ function createBehaviourTrees() {
 function MainBrain() {
     this.executor = new BTExecutor();
     this.blackBoard = new Blackboard(createBehaviourTrees());
-
-    // We start a tree
-    // TEST
-    this.blackBoard.startBehaviourTree('helloWorld');
 }
+
+MainBrain.instance = new MainBrain();
 
 function runBehaviourTrees(bb, executor) {
     var contexts = bb.getBehaviourTreeContexts();
@@ -35,6 +33,12 @@ function runBehaviourTrees(bb, executor) {
 }
 
 MainBrain.prototype.run = function() {
+    // We start the main tree if it's not running already
+    // TODO TEST
+    var bb = this.blackBoard;
+    if(!bb.isBehaviourTreeRunning('helloWorld'))
+        bb.startBehaviourTree('helloWorld');
+
     // TODO run all brains (word/room/unit)
     runBehaviourTrees(this.blackBoard, this.executor);
 }

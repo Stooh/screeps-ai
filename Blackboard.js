@@ -39,6 +39,12 @@ Blackboard.prototype.getBehaviourTreeContexts = function() {
     return this.btContexts;
 };
 
+Blackboard.prototype.isBehaviourTreeRunning = function(treeName) {
+    this.btContexts.some(function(context) {
+        return context.tree.title = treeName;
+    });
+};
+
 Blackboard.prototype.startBehaviourTree = function(treeName) {
     var tree = this.behaviourTrees[treeName];
     if(!tree)
@@ -47,7 +53,10 @@ Blackboard.prototype.startBehaviourTree = function(treeName) {
     var mem = {};
     this.btContextsMemory.push(mem);
 
-    return new BTTreeContext(this, mem, tree);
+    var res = new BTTreeContext(this, mem, tree);
+    this.btContexts.push(res);
+
+    return res;
 };
 
 // TODO : handle clean up of tree memory
