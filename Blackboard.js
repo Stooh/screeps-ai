@@ -40,7 +40,7 @@ Blackboard.prototype.getBehaviourTreeContexts = function() {
 };
 
 Blackboard.prototype.isBehaviourTreeRunning = function(treeName) {
-    this.btContexts.some(function(context) {
+    return this.btContexts.some(function(context) {
         return context.tree.title = treeName;
     });
 };

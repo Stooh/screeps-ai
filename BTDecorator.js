@@ -1,4 +1,6 @@
-module.exports = require('BTTask').extend({
+var BTTask = require('BTTask');
+
+module.exports = BTTask.extend({
     constructor: function(task) {
         this.base();
         this.task = task;
@@ -16,13 +18,13 @@ module.exports = require('BTTask').extend({
     },
 
     tick: function(executor, context) {
-        return this.WAITING;
+        return BTTask.WAITING;
     },
 
     hashCode: function() { return 17 * this.base() + this.task.hashCode(); },
 
     childFinish: function(executor, context, child, success) {
-        return success ? this.SUCCESS : this.FAILURE;
+        return success ? BTTask.SUCCESS : BTTask.FAILURE;
     },
 
     generateUniqueIdsRecursive: function(id) {

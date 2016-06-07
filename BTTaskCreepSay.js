@@ -1,12 +1,15 @@
+var BTTask = require('BTTask');
+
 module.exports = require('BTTaskLeaf').extend({
     constructor: function(text) {
         this.base();
         this.text = text;
     },
     tick: function(executor, context) {
-        Game.creeps.forEach(this.speak, this);
+        _.each(Game.creeps, this.speak, this);
+        return BTTask.SUCCESS;
     },
     speak: function(creep) {
-        creep.say(text);
+        creep.say(this.text);
     },
 });

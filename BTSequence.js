@@ -1,4 +1,5 @@
 var Log = require('Log');
+var BTTask = require('BTTask');
 
 const CUR_TASK = 'curTask';
 
@@ -23,16 +24,16 @@ module.exports = require('BTComposite').extend({
         // not running
         if(curTask < 0) {
             Log.warn('Running not started sequence');
-            return FAILURE;
+            return BTTask.FAILURE;
         }
 
         // if we are over the list length, we have finished
         if(curTask >= this.tasks)
-            return SUCCESS;
+            return BTTask.SUCCESS;
 
         // We start current task
         executor.start(this.tasks[curTask], context);
-        return WAITING;
+        return BTTask.WAITING;
     },
     tick: function(executor, context) {
         // we start the first children, we will continue in childFinish
@@ -43,12 +44,12 @@ module.exports = require('BTComposite').extend({
         var curTask = this.getCurTaskIndex(context);
         if(curTask < 0 || curTask >= this.tasks) {
             Log.warn('the finished task is not current one');
-            return FAILURE;
+            return BTTask.FAILURE;
         }
 
         // if child failed, we failed
         if(!success)
-            return FAILURE;
+            return BTTask.FAILURE;
 
         // if not, we launch next task (or finish)
         this.setMemory(context, CUR_TASK, ++curTask);

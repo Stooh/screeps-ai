@@ -1,4 +1,5 @@
 var Log = require('Log');
+var BTTask = require('BTTask');
 
 const COUNT_WAITING = 'countTaskWaiting';
 
@@ -20,7 +21,7 @@ module.exports = require('BTComposite').extend({
             executor.start(task, context);
         });
 
-        return WAITING;
+        return BTTask.WAITING;
     },
     childFinish: function(executor, context, child, success) {
         var left = this.getMemory(context, COUNT_WAITING);
@@ -28,15 +29,15 @@ module.exports = require('BTComposite').extend({
         // We check if we're actually waiting for tasks to finish
         if(left < 0) {
             Log.warn('not waiting for finished task');
-            return FAILURE;
+            return BTTask.FAILURE;
         }
 
         // if child failed, we failed
         if(!success)
-            return FAILURE;
+            return BTTask.FAILURE;
 
         // if not, we finish only if all tasks finished
         this.setMemory(context, COUNT_WAITING, --left);
-        return left > 0 ? WAITING : SUCCESS;
+        return left > 0 ? BTTask.WAITING : BTTask.SUCCESS;
     },
 });

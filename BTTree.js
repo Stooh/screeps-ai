@@ -11,8 +11,8 @@ module.exports = require('Base').extend({
     title: '',
     root: undefined,
     nodesById: {},
-    
+
     getNodeById: function(id) {
-        return nodesById[id];
+        return this.nodesById[id];
     }
 });

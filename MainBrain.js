@@ -37,7 +37,7 @@ MainBrain.prototype.run = function() {
     // TODO TEST
     var bb = this.blackBoard;
     if(!bb.isBehaviourTreeRunning('helloWorld'))
-        bb.startBehaviourTree('helloWorld');
+        bb.startBehaviourTree('helloWorld', this.executor);
 
     // TODO run all brains (word/room/unit)
     runBehaviourTrees(this.blackBoard, this.executor);

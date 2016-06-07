@@ -41,7 +41,7 @@ module.exports = require('Base').extend({
             // but we might have to transmit the parent's answer to the grandparent as well
             // so we get its value now, just in case it might be modified
             var grandParent = parent.parent;
-            var parentRes = parent.childFinish(this, context, child, ending.res == BTTask.SUCCESS);
+            var parentRes = parent.childFinish(this, context, child, res == BTTask.SUCCESS);
 
             // if parent task finishes, we must now report its success too
             if(parentRes != BTTask.RUNNING && parentRes != BTTask.WAITING) {

@@ -60,7 +60,7 @@ module.exports = require('Base').extend({
     addActiveNode: function(node) {
         var nodeId = node.id;
         var activeNodesIds = this.activeNodesMemory;
-        if(!activeNodesIds.includes(node.id))
+        if(_.indexOf(activeNodesIds, nodeId) < 0)
             activeNodesIds.push(nodeId);
     },
 

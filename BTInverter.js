@@ -1,3 +1,5 @@
+var BTTask = require('BTTask');
+
 module.exports = require('BTDecorator').extend({
     constructor: function(task) {
         this.base(task);
@@ -5,6 +7,6 @@ module.exports = require('BTDecorator').extend({
 
     childFinish: function(executor, context, child, success) {
         // We invert the result
-        return success ? this.FAILURE : this.SUCCESS;
+        return success ? BTTask.FAILURE : BTTask.SUCCESS;
     },
 });
