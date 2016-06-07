@@ -15,25 +15,24 @@ module.exports = require('BTTask').extend({
         return this.base() && this.tasks.length > 0;
     },
 
-    _hashCodeTask: function(value, task) {
-        return 17 * res + task.hashCode();
-    },
-
     hashCode: function() {
-        return this.tasks.reduce(this._hashCodeTask, this.base());
-    },
-
-    _generateUniqueId: function(id, childTask) {
-        // return last id used by the child task
-        // we'll increment for the next child task, etc.
-        return childTask.generateUniqueIdsRecursive(id + 1);
+        return this.tasks.reduce(
+            function(value, task) {
+                return 17 * res + task.hashCode();
+            },
+            this.base());
     },
 
     generateUniqueIdsRecursive: function(id) {
         this.base(id);
 
         // affect id to all sub tasks
-        return this.tasks.reduce(_generateUniqueId, id);
+        return this.tasks.reduce(function(id, childTask) {
+                // return last id used by the child task
+                // we'll increment for the next child task, etc.
+                return childTask.generateUniqueIdsRecursive(id + 1);
+            },
+            id);
     },
 
     registerRecursive: function(register) {
