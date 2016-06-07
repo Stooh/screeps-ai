@@ -49,21 +49,21 @@ module.exports = require('Base').extend({
             }
         }
     },
-    _tickNode: function(endings, activeNode) {
-        var res = node.tick(this, context);
-
-        // if it's not running anymore, we have to unregister the task
-        // But we dont want any concurent modif, we do that later
-        if(res != BTTask.RUNNING)
-            endings.push({node: node, res: res, parent: node.parent});
-
-        return endings;
-    },
     tick: function(context) {
         var activeNodes = context.getActiveNodes();
 
         // We tick all actives nodes, and get thoses that finished
-        var endings = activeNodes.reduce(_tickNode, []);
+        var endings = activeNodes.reduce(function(endings, activeNode) {
+                var res = activeNode.tick(this, context);
+
+                // if it's not running anymore, we have to unregister the task
+                // But we dont want any concurent modif, we do that later
+                if(res != BTTask.RUNNING)
+                endings.push({node: activeNode, res: res, parent: activeNode.parent});
+
+                return endings;
+            },
+            []);
 
         // Now we handle finishing nodes
         endings.forEach(function(ending) {
