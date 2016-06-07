@@ -45,7 +45,7 @@ Blackboard.prototype.isBehaviourTreeRunning = function(treeName) {
     });
 };
 
-Blackboard.prototype.startBehaviourTree = function(treeName) {
+Blackboard.prototype.startBehaviourTree = function(treeName, executor) {
     var tree = this.behaviourTrees[treeName];
     if(!tree)
         Log.crash('No tree for label ' + treeName);
@@ -55,6 +55,8 @@ Blackboard.prototype.startBehaviourTree = function(treeName) {
 
     var res = new BTTreeContext(this, mem, tree);
     this.btContexts.push(res);
+
+    executor.start(tree.root, res);
 
     return res;
 };

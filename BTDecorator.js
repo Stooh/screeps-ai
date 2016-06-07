@@ -16,7 +16,7 @@ module.exports = require('BTTask').extend({
     },
 
     tick: function(executor, context) {
-        return WAITING;
+        return this.WAITING;
     },
 
     hashCode: function() { return 17 * this.base() + this.task.hashCode(); },

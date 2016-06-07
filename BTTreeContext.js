@@ -40,9 +40,6 @@ module.exports = require('Base').extend({
                 Log.crash('No tree hashcode, but we got node memories');
             if(Object.keys(this.sharedMemory).length > 0)
                 Log.crash('No tree hashcode, but we got shared memories');
-
-            // We put root as starting node
-            this.activeNodesMemory.push(this.tree.root.id);
         } else if(treeHashCode != memTreeHashCode) {
             Log.crash('Wrong tree hashcode: ' + treeHashCode + ' vs ' + memTreeHashCode);
         }
