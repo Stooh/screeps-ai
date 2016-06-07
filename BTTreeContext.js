@@ -13,6 +13,7 @@ module.exports = require('Base').extend({
         this.init();
     },
 
+    tree: undefined,
     bb: undefined,
     memory: undefined,
     activeNodesMemory: undefined,
