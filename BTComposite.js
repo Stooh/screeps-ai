@@ -1,4 +1,6 @@
-module.exports = require('BTTask').extend({
+var BTTask = require('BTTask');
+
+module.exports = BTTask.extend({
     constructor: function(tasks) {
         this.base();
         this.tasks = tasks || [];
