@@ -12,6 +12,8 @@ var BTTask = require('Base').extend({
     childFinish: function(executor, context, child, success) {},
     setMemory: function(context, key, value) { return context.setNodeMemory(this, key, value); },
     getMemory: function(context, key) { return context.getNodeMemory(this, key); },
+    setSharedMemory: function(context, key, value) { return context.setSharedMemory(key, value); },
+    getSharedMemory: function(context, key) { return context.getSharedMemory(key); },
     hashCode: function() { return this.constructor.name.hashCode(); },
     generateUniqueIdsRecursive: function(id) {
         return this.id = id || 0;
