@@ -8,7 +8,7 @@ var BT = {};
     'Inverter' ,
     'Parallel',
     'PopFromStack',
-    'PushFromStack',
+    'PushToStack',
     'Repeat',
     'RepeatUntilFail',
     'Sequence',
