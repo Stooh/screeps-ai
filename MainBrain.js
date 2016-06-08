@@ -1,17 +1,14 @@
 var Blackboard = require('Blackboard');
-var BTTree = require('BTTree');
-var BTExecutor = require('BTExecutor');
-var BTRepeat = require('BTRepeat');
-var BTTaskCreepSay = require('BTTaskCreepSay');
+var BT = require('BT');
 
 // TODO externalize trees ?
 function createBehaviourTrees() {
     var res = {};
 
     // test tree
-    res['helloWorld'] = new BTTree('helloWorld',
-        new BTRepeat(
-            new BTTaskCreepSay('Hello World !')
+    res['helloWorld'] = new BT.Tree('helloWorld',
+        new BT.Repeat(
+            new BT.TaskCreepSay('Hello World !')
         )
     );
 
@@ -19,7 +16,7 @@ function createBehaviourTrees() {
 };
 
 function MainBrain() {
-    this.executor = new BTExecutor();
+    this.executor = new BT.Executor();
     this.blackBoard = new Blackboard(createBehaviourTrees());
 }
 
