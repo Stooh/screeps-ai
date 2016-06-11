@@ -48,13 +48,13 @@ MainBrain.prototype.run = function() {
 };
 
 MainBrain.prototype.loadBlackboard = function() {
-    var parsed = JSON.parse(RawMemory.get())
+    var parsed = JSON.parse(RawMemory.get());
     Memory = parsed; // does it work ?
-    this.bb.parse(parsed);
+    this.blackBoard.parse(parsed);
 };
 
 MainBrain.prototype.saveBlackboard = function() {
-    RawMemory.set(JSON.stringify(this.bb.serialize()));
+    RawMemory.set(JSON.stringify(this.blackBoard.serialize()));
 };
 
 module.exports = MainBrain;

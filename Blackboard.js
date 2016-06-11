@@ -54,7 +54,7 @@ Blackboard.prototype.startBehaviourTree = function(treeName, executor) {
     if(!tree)
         Log.crash('No tree for label ' + treeName);
 
-    var res = new BTTreeContext(this,, tree);
+    var res = new BTTreeContext(this, tree);
     this.btContexts.push(res);
 
     executor.start(tree.root, res);
@@ -63,6 +63,9 @@ Blackboard.prototype.startBehaviourTree = function(treeName, executor) {
 };
 
 Blackboard.prototype.parse = function(value) {
+    if(!value)
+        return;
+
     // we are only interested
     if(value.global)
         this.global = Helpers.parse(value.global);
@@ -70,7 +73,7 @@ Blackboard.prototype.parse = function(value) {
         this.global = {};
 
     if(value.btContexts)
-        this.btContexts = value.btContexts.map(BTContext.parse).filter(_.isObject);
+        this.btContexts = value.btContexts.map(_.partial(BTTreeContext.parse, this)).filter(_.isObject);
     else
         this.btContexts = [];
 };

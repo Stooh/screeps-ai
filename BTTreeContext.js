@@ -127,7 +127,7 @@ var BTTreeContext = require('Serializable').extend({
     serialize: function() {
         return {
             treeName: this.tree.title,
-            treeHashCode: this.tree.hashCode(),
+            treeHashCode: this.tree.hashCode,
             activeNodes: _.pluck(this.activeNodes, 'id'),
             nodesMemory: Helpers.serialize(this.nodesMemory),
             sharedMemory: Helpers.serialize(this.sharedMemory),
@@ -135,9 +135,7 @@ var BTTreeContext = require('Serializable').extend({
     },
 });
 
-BTTreeContext.parse = function(toParse) {
-    var bb = Blackboard.bb;
-
+BTTreeContext.parse = function(bb, toParse) {
     if(!bb) {
         Log.warn('No blackboard !');
         return null;
@@ -156,7 +154,7 @@ BTTreeContext.parse = function(toParse) {
 
     // we check the tree didnt change hashcode
     var treeHashCode = toParse.treeHashCode;
-    if(treeHashCode != tree.hashCode()) {
+    if(treeHashCode != tree.hashCode) {
         Log.warn('Tree changed hashcode ' + treeName);
         return null;
     }

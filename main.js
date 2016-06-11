@@ -5,5 +5,5 @@ var MainBrain = require('MainBrain');
 module.exports.loop = function () {
     MainBrain.instance.run();
 
-    Helpers.garbageCollection();
+    //Helpers.garbageCollection();
 }

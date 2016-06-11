@@ -6,6 +6,13 @@ var Serializable = require('Serializable');
 var Helpers = {};
 
 ///// MEMORY PARSE
+function parseObject(memo, value, key) {
+    var res = Helpers.parse(value);
+    if(!_.isNull(res))
+        memo[key] = res;
+    return res;
+};
+
 Helpers.parse = function(toParse) {
     if(_.isArray(toParse))
         return _.reject(_.map(toParse, Helpers.parse), _.isNull);
@@ -17,10 +24,17 @@ Helpers.parse = function(toParse) {
             else
                 Log.warn('Missing parser: ' + toParse.parser);
         }
-        return _.reject(_.mapObject(toParse, Helpers.parse), _.isNull);
+        return _.reduce(toParse, parseObject, {});
     } else {
         return toParse;
     }
+};
+
+function serializeObject(memo, value, key) {
+    var res = Helpers.serialize(value);
+    if(!_.isNull(res))
+        memo[key] = res;
+    return memo;
 };
 
 Helpers.serialize = function(toSerialize) {
@@ -30,7 +44,7 @@ Helpers.serialize = function(toSerialize) {
         if(_.isFunction(toSerialize.serialize))
             return toSerialize.serialize();
         else
-            return _.reject(_.mapObject(toSerialize, Helpers.serialize), _.isNull);
+            return _.reduce(toSerialize, serializeObject, {});
     } else {
         return toSerialize;
     }
