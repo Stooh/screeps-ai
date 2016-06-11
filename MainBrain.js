@@ -47,13 +47,13 @@ MainBrain.prototype.run = function() {
     this.saveBlackboard();
 };
 
-MainBrain.prototype.loadBlackboard() {
+MainBrain.prototype.loadBlackboard = function() {
     var parsed = JSON.parse(RawMemory.get())
     Memory = parsed; // does it work ?
     this.bb.parse(parsed);
 };
 
-MainBrain.prototype.saveBlackboard() {
+MainBrain.prototype.saveBlackboard = function() {
     RawMemory.set(JSON.stringify(this.bb.serialize()));
 };
 

@@ -1,6 +1,5 @@
 var Constants = require('Constants');
 var Log = require('Log');
-var Mem = require('Mem');
 var Parsers = require('Parsers');
 var Serializable = require('Serializable');
 

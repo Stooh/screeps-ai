@@ -19,7 +19,7 @@ var GameObjectCache = require('Serializable').extend({
     },
 });
 
-GameObjectCache.parse(toParse) {
+GameObjectCache.parse = function(toParse) {
     var id = toParse.id;
     if(!id)
         return null;

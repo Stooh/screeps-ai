@@ -1,4 +1,4 @@
-Log = {};
+var Log = {};
 
 function _log(gravity, message) {
     console.log(Game.time + ' [' + gravity + '] ' + message);

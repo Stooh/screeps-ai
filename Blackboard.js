@@ -8,15 +8,8 @@ function Blackboard(behaviourTrees) {
 
     this.behaviourTrees = behaviourTrees;
 
-    // loading memory
-    var mem = Helpers.MemRoot.memObject('blackboard');
-    this.mem = mem;
-    this.btContextsMem = mem.memArray('btContextsMemory');
-    this.global = mem.memObject('memGlobal');
-
-    // creating context objects from memory
-    this.btContexts = _.map(mem.btContextsMem.values(), this.initBehaviourTreeContext, this)
-                            .filter(_.isObject);
+    this.global = {};
+    this.btContexts = [];
 };
 
 Blackboard.prototype.initBehaviourTreeContext = function(btContextMem, key) {
@@ -61,10 +54,7 @@ Blackboard.prototype.startBehaviourTree = function(treeName, executor) {
     if(!tree)
         Log.crash('No tree for label ' + treeName);
 
-    var mem = {};
-    this.btContextsMemory.push(mem);
-
-    var res = new BTTreeContext(this, mem, tree);
+    var res = new BTTreeContext(this,, tree);
     this.btContexts.push(res);
 
     executor.start(tree.root, res);
@@ -76,8 +66,13 @@ Blackboard.prototype.parse = function(value) {
     // we are only interested
     if(value.global)
         this.global = Helpers.parse(value.global);
+    else
+        this.global = {};
+
     if(value.btContexts)
         this.btContexts = value.btContexts.map(BTContext.parse).filter(_.isObject);
+    else
+        this.btContexts = [];
 };
 
 Blackboard.prototype.serialize = function() {
