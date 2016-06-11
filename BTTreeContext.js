@@ -1,53 +1,21 @@
 var Log = require('Log');
 var Helpers = require('Helpers');
 
-module.exports = require('Base').extend({
-    constructor: function(bb, memory, tree) {
+var BTTreeContext = require('Serializable').extend({
+    constructor: function(bb, tree, activeNodes, nodesMemory, sharedMemory) {
         this.bb = bb;
-        this.memory = memory;
         this.tree = tree;
-        this.activeNodesMemory = Helpers.createMemory('activeNodes', this, Helpers.ARRAY_CREATE_CALLBACK);
-        this.nodesMemory = Helpers.createMemory('nodes', this);
-        this.sharedMemory = Helpers.createMemory('shared', this);
 
-        this.init();
+        this.activeNodes = activeNodes || [];
+        this.nodesMemory = nodesMemory || {};
+        this.sharedMemory = sharedMemory || {};
     },
 
     tree: undefined,
     bb: undefined,
-    memory: undefined,
-    activeNodesMemory: undefined,
+    activeNodes: undefined,
     nodesMemory: undefined,
     sharedMemory: undefined,
-
-    init: function() {
-        // check if we're recoving an existing state
-        // or if we need to init a new one
-        var memory = this.memory;
-
-        var treeHashCode = this.tree.hashCode;
-        var memTreeHashCode = memory.treeHashCode;
-
-        if(_.isUndefined(memTreeHashCode)) {
-            // init a new memory
-            memory.treeHashCode = treeHashCode;
-
-            // check other memories
-            // sanity checks
-            if(this.activeNodesMemory.length > 0)
-                Log.crash('No tree hashcode, but we got active nodes');
-            if(Object.keys(this.nodesMemory).length > 0)
-                Log.crash('No tree hashcode, but we got node memories');
-            if(Object.keys(this.sharedMemory).length > 0)
-                Log.crash('No tree hashcode, but we got shared memories');
-        } else if(treeHashCode != memTreeHashCode) {
-            Log.crash('Wrong tree hashcode: ' + treeHashCode + ' vs ' + memTreeHashCode);
-        }
-
-        // TODO : check if activeNodesIds / node memories are correct ?
-
-        // here everything's ok
-    },
 
     onTreeResult: function(result) {
         // TODO
@@ -58,38 +26,28 @@ module.exports = require('Base').extend({
     },
 
     addActiveNode: function(node) {
-        var nodeId = node.id;
-        var activeNodesIds = this.activeNodesMemory;
-        if(_.indexOf(activeNodesIds, nodeId) < 0)
-            activeNodesIds.push(nodeId);
+        var activeNodes = this.activeNodes;
+        if(_.indexOf(activeNodes, node) < 0)
+            activeNodes.push(node);
     },
 
     removeActiveNode: function(node) {
-        var nodeId = node.id;
-        var activeNodesIds = this.activeNodesMemory;
-        var index = activeNodesIds.indexOf(nodeId);
+        var activeNodes = this.activeNodes;
+        var index = activeNodes.indexOf(node);
         if(index > -1)
-            activeNodesIds.splice(index, 1);
-    },
-
-    getActiveNode: function(nodeId) {
-        var node = this.tree.getNodeById(nodeId);
-        if(_.isUndefined(node))
-            Log.crash('Missing node: ' + nodeId + ' for tree ' + this.treeTitle);
-
-        return node;
+            activeNodes.splice(index, 1);
     },
 
     getActiveNodes: function() {
-        return this.activeNodesMemory.map(this.getActiveNode, this);
+        return this.activeNodes;
     },
 
     setSharedMemory: function(key, value) {
-        return this.sharedMemory[key] = value;
+        return this.setMemory(null, BTTreeContext.MEM_TREE, key, value);
     },
 
     getSharedMemory: function(key, defaultValue) {
-        return this._getMemory(this.sharedMemory, key, defaultValue);
+        return this.getMemory(null, BTTreeContext.MEM_TREE, key, defaultValue);
     },
 
     checkValidNode: function(node) {
@@ -101,45 +59,133 @@ module.exports = require('Base').extend({
     },
 
     setNodeMemory: function(node, key, value) {
-        this.checkValidNode(node);
-
-        return this._setMemory(this.nodesMemory, node.id, key, value);
+        return this.setMemory(node, BTTreeContext.MEM_NODE, key, value);
     },
 
     getNodeMemory: function(node, key, defaultValue) {
-        this.checkValidNode(node);
-
-        return this._getMemory(this.nodesMemory[node.id], key, defaultValue);
+        return this.getMemory(node, BTTreeContext.MEM_NODE, key, defaultValue);
     },
 
     setGlobalMemory: function(key, value) {
-        var mem = this.getBlackboard().getGlobalMemory();
-        return mem[key] = value;
+        return this.setMemory(null, BTTreeContext.MEM_BLACKBOARD, key, value);
     },
 
     getGlobalMemory: function(key, defaultValue) {
-        var mem = this.getBlackboard().getGlobalMemory();
-        if(!(key in mem))
+        return this.getMemory(null, BTTreeContext.MEM_BLACKBOARD, key, defaultValue);
+    },
+
+    getMemory: function(node, scope, key, defaultValue) {
+        var mem;
+        switch(scope) {
+            case BTTreeContext.MEM_NODE:
+                this.checkValidNode(node);
+
+                var mem = nodesMemory[node.id];
+                if(!mem)
+                    return defaultValue;
+
+                break;
+            case BTTreeContext.MEM_TREE:
+                mem = this.sharedMemory;
+                break;
+            case BTTreeContext.MEM_BLACKBOARD:
+                mem = this.bb.getGlobalMemory();
+                break;
+        }
+
+        if(!key in mem)
             return defaultValue;
+
         return mem[key];
     },
 
-    _setMemory: function(baseMemory, firstKey, secondKey, value) {
+    setMemory: function(node, scope, key, value) {
         var mem;
-        if(!(firstKey in baseMemory)) {
-            mem = baseMemory = {};
-        } else {
-            mem = baseMemory[firstKey];
+        switch(scope) {
+            case BTTreeContext.MEM_NODE:
+                this.checkValidNode(node);
+
+                var nodeId = node.id;
+                var nodesMemory = this.nodesMemory;
+                var mem = nodesMemory[nodeId];
+                if(!mem) {
+                    mem = {};
+                    nodesMemory[nodeId] = mem;
+                }
+                break;
+            case BTTreeContext.MEM_TREE:
+                mem = this.sharedMemory;
+                break;
+            case BTTreeContext.MEM_BLACKBOARD:
+                mem = this.bb.getGlobalMemory();
+                break;
         }
 
-        return mem[secondKey] = value;
+        return mem[key] = value;
     },
 
-    _getMemory: function(memory, key, defaultValue) {
-        if(_.isUndefined(memory))
-            return defaultValue;
-        if(!(key in memory))
-            return defaultValue;
-        return memory[key];
+    serialize: function() {
+        return {
+            treeName: this.tree.title,
+            treeHashCode: this.tree.hashCode(),
+            activeNodes: _.pluck(this.activeNodes, 'id'),
+            nodesMemory: Helpers.serialize(this.nodesMemory),
+            sharedMemory: Helpers.serialize(this.sharedMemory),
+        };
     },
 });
+
+BTTreeContext.parse = function(toParse) {
+    var bb = Blackboard.bb;
+
+    if(!bb) {
+        Log.warn('No blackboard !');
+        return null;
+    }
+
+    var treeName = toParse.treeName;
+    if(!treeName)
+        return null;
+
+    // we check the tree exists
+    var tree = bb.getBehaviourTree(treeName);
+    if(!tree) {
+        Log.warn('No tree with name ' + treeName);
+        return null;
+    }
+
+    // we check the tree didnt change hashcode
+    var treeHashCode = toParse.treeHashCode;
+    if(treeHashCode != tree.hashCode()) {
+        Log.warn('Tree changed hashcode ' + treeName);
+        return null;
+    }
+
+    // check active nodes are valid
+    var activeNodesIds = toParse.activeNodes;
+    if(!activeNodesIds) {
+        Log.warn('No active nodes');
+        return null;
+    }
+
+    // we map activeNodes to the real nodes
+    var activeNodes = _.map(activeNodesIds, function(id) {return tree.getNodeById(id);});
+
+    if(_.some(activeNodes, _.isUndefined)) {
+        Log.warn('Some invalid nodes in ' + activeNodesIds);
+        return null;
+    }
+
+    return new BTTreeContext(
+        bb,
+        tree,
+        activeNodes,
+        Helpers.parse(toParse.nodesMemory),
+        Helpers.parse(toParse.sharedMemory));
+};
+
+BTTreeContext.MEM_NODE = 0;
+BTTreeContext.MEM_TREE = 1;
+BTTreeContext.MEM_BLACKBOARD = 2;
+
+module.exports = BTTreeContext;

@@ -1,7 +1,42 @@
 var Constants = require('Constants');
 var Log = require('Log');
+var Mem = require('Mem');
+var Parsers = require('Parsers');
+var Serializable = require('Serializable');
 
 var Helpers = {};
+
+///// MEMORY PARSE
+Helpers.parse = function(toParse) {
+    if(_.isArray(toParse))
+        return _.reject(_.map(toParse, Helpers.parse), _.isNull);
+    else if(_.isObject(toParse)) {
+        if('parser' in toParse) {
+            var parser = Parsers[toParse.parser];
+            if(parser)
+                return parser.call(null, toParse);
+            else
+                Log.warn('Missing parser: ' + toParse.parser);
+        }
+        return _.reject(_.mapObject(toParse, Helpers.parse), _.isNull);
+    } else {
+        return toParse;
+    }
+};
+
+Helpers.serialize = function(toSerialize) {
+    if(_.isArray(toSerialize))
+        return _.reject(_.map(toSerialize, Helpers.serialize), _.isNull);
+    else if(_.isObject(toSerialize)) {
+        if(_.isFunction(toSerialize.serialize))
+            return toSerialize.serialize();
+        else
+            return _.reject(_.mapObject(toSerialize, Helpers.serialize), _.isNull);
+    } else {
+        return toSerialize;
+    }
+};
+////////////////////
 
 
 ///// DISTANCE
@@ -17,9 +52,10 @@ Helpers.getDistance = function(a,b) {
     }
 
     return Math.abs(ap.x - bp.x) + Math.abs(ap.y - bp.y);
-}
+};
 ///////////////////////
 
+/*
 ///// MEMORY
 Helpers.createMemory = function(label, base, createCallback) {
     var memory = _.isUndefined(base) ? Memory : base.memory;
@@ -57,8 +93,9 @@ Helpers.getOrCreateFromMemory = function(base, label, createCallback) {
         base.memory[label] = res;
     }
     return res;
-};
+};*/
 
+/*
 // true if delay cycle or more have passed since last time it returned true
 Helpers.checkRepeat = function(base, delay, label) {
 	label = label || 'lastUpdateTime';
@@ -99,6 +136,7 @@ Helpers.garbageCollection =  function() {
             delete Memory.gameObject[n];
 };
 //////////////////////////
+*/
 
 
 // convert {x,y} to integer value

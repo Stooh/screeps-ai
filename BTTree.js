@@ -2,7 +2,7 @@ module.exports = require('Base').extend({
     constructor: function(title, root) {
         this.title = title;
         this.root = root;
-        root.generateUniqueIdsRecursive();
+        this.maxNodeId = root.generateUniqueIdsRecursive();
         this.hashCode = _.isUndefined(root) ? 0 : root.hashCode();
         this.nodesById = _.isUndefined(root) ? {} : root.registerRecursive({});
     },
@@ -14,5 +14,5 @@ module.exports = require('Base').extend({
 
     getNodeById: function(id) {
         return this.nodesById[id];
-    }
+    },
 });

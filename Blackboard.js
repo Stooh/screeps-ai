@@ -3,28 +3,39 @@ var Helpers = require('Helpers');
 var BTTreeContext = require('BTTreeContext');
 
 function Blackboard(behaviourTrees) {
+    // refresh instance
+    Blackboard.instance = this;
+
     this.behaviourTrees = behaviourTrees;
-    var mem = Helpers.createMemory('blackboard')
-    this.memory = mem;
-    if(!('global' in mem))
-        mem.global = {};
-    if(!('btContexts' in mem))
-        mem.btContextsMemory = [];
-    this.btContextsMemory = mem.btContextsMemory;
-    this.btContexts = mem.btContextsMemory.map(this.initBehaviourTreeContext, this);
+
+    // loading memory
+    var mem = Helpers.MemRoot.memObject('blackboard');
+    this.mem = mem;
+    this.btContextsMem = mem.memArray('btContextsMemory');
+    this.global = mem.memObject('memGlobal');
+
+    // creating context objects from memory
+    this.btContexts = _.map(mem.btContextsMem.values(), this.initBehaviourTreeContext, this)
+                            .filter(_.isObject);
 };
 
-Blackboard.prototype.initBehaviourTreeContext = function(btContextMem) {
+Blackboard.prototype.initBehaviourTreeContext = function(btContextMem, key) {
     var treeTitle = btContextMem.treeName;
     var tree = this.behaviourTrees[treeTitle];
     if(!tree)
         Log.crash('No tree for label ' + treeTitle);
 
-    return new BTTreeContext(this, btContextMem, tree);
+    try {
+        return new BTTreeContext(this, btContextMem, tree);
+    } catch(ex) {
+        Log.warn('Dropping tree context because of exception: ' + ex);
+        this.btContextsMem.remove(key);
+        return undefined;
+    }
 };
 
-Blackboard.prototype.getGlobalMemory = function() {
-    return this.memory.global;
+Blackboard.prototype.getGlobalMem = function() {
+    return this.global;
 };
 
 Blackboard.prototype.getBehaviourTree = function(label) {
@@ -32,7 +43,7 @@ Blackboard.prototype.getBehaviourTree = function(label) {
 };
 
 Blackboard.prototype.getBehaviourTreeContextsMemory = function() {
-    return this.btContextsMemory;
+    return this.btContextsMem;
 };
 
 Blackboard.prototype.getBehaviourTreeContexts = function() {
@@ -59,6 +70,21 @@ Blackboard.prototype.startBehaviourTree = function(treeName, executor) {
     executor.start(tree.root, res);
 
     return res;
+};
+
+Blackboard.prototype.parse = function(value) {
+    // we are only interested
+    if(value.global)
+        this.global = Helpers.parse(value.global);
+    if(value.btContexts)
+        this.btContexts = value.btContexts.map(BTContext.parse).filter(_.isObject);
+};
+
+Blackboard.prototype.serialize = function() {
+    return {
+        global: Helpers.serialize(this.global),
+        btContexts: Helpers.serialize(this.btContexts),
+    };
 };
 
 // TODO : handle clean up of tree memory

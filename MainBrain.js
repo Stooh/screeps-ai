@@ -18,7 +18,7 @@ function createBehaviourTrees() {
 function MainBrain() {
     this.executor = new BT.Executor();
     this.blackBoard = new Blackboard(createBehaviourTrees());
-}
+};
 
 MainBrain.instance = new MainBrain();
 
@@ -27,17 +27,34 @@ function runBehaviourTrees(bb, executor) {
     contexts.forEach(function(context) {
         executor.tick(context);
     });
-}
+};
 
-MainBrain.prototype.run = function() {
+MainBrain.prototype.checkMainTreeRunning = function() {
     // We start the main tree if it's not running already
-    // TODO TEST
     var bb = this.blackBoard;
     if(!bb.isBehaviourTreeRunning('helloWorld'))
-        bb.startBehaviourTree('helloWorld', this.executor);
+    bb.startBehaviourTree('helloWorld', this.executor);
+};
 
-    // TODO run all brains (word/room/unit)
+MainBrain.prototype.run = function() {
+    this.loadBlackboard();
+
+    this.checkMainTreeRunning();
+
+    // run all trees
     runBehaviourTrees(this.blackBoard, this.executor);
-}
+
+    this.saveBlackboard();
+};
+
+MainBrain.prototype.loadBlackboard() {
+    var parsed = JSON.parse(RawMemory.get())
+    Memory = parsed; // does it work ?
+    this.bb.parse(parsed);
+};
+
+MainBrain.prototype.saveBlackboard() {
+    RawMemory.set(JSON.stringify(this.bb.serialize()));
+};
 
 module.exports = MainBrain;
