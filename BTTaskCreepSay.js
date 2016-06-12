@@ -1,15 +1,31 @@
 var BTTask = require('BTTask');
 
+var SAYS = [
+    ':)',
+    ':(',
+    'o_O',
+    'XD',
+    'o/',
+    '(>\'-\')>',
+    '<(\'-\'<)',
+    '^(\'-\')^',
+];
+
 module.exports = require('BTTaskLeaf').extend({
-    constructor: function(text) {
+    constructor: function(creep) {
         this.base();
-        this.text = text;
+        this.creep = creep;
     },
     tick: function(executor, context) {
-        _.each(Game.creeps, this.speak, this);
+        var creep = this.getSharedMemory(context, this.creep);
+        if(!creep)
+            return BTTask.FAILURE;
+
+        this.speak(creep);
         return BTTask.SUCCESS;
     },
     speak: function(creep) {
-        creep.say(this.text);
+        var index = Game.time % SAYS.length;
+        creep.say(SAYS[index]);
     },
 });

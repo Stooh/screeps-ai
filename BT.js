@@ -9,6 +9,7 @@ var BT = {};
     'Parallel',
     'PopFromStack',
     'PushToStack',
+    'GetGameStack',
     'Repeat',
     'RepeatUntilFail',
     'Sequence',

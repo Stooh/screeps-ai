@@ -8,9 +8,22 @@ function createBehaviourTrees() {
     // test tree
     res['helloWorld'] = new BT.Tree('helloWorld',
         new BT.Repeat(
-            new BT.TaskCreepSay('Hello World !')
+            new BT.Sequence([
+                new BT.GetGameStack('creeps'),
+                new BT.RepeatUntilFail(
+                    new BT.Sequence([
+                        new BT.PopFromStack('creeps', 'creep'),
+                        new BT.TaskCreepSay('creep'),
+                    ])
+                )
+            ])
         )
     );
+    /*res['helloWorld'] = new BT.Tree('helloWorld',
+        new BT.Repeat(
+            new BT.TaskCreepSay('Hello World !')
+        )
+    );*/
 
     return res;
 };
