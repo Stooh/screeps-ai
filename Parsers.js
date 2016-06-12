@@ -1,6 +1,6 @@
 var Parsers = {};
 
-['GameObjectCache'].forEach(function(v) {
+['GameObjectParser'].forEach(function(v) {
     Parsers[v] = require(v).parse;
 });
 
