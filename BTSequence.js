@@ -19,7 +19,11 @@ module.exports = require('BTComposite').extend({
         return this.getMemory(context, CUR_TASK);
     },
     nextTask: function(executor, context, taskIndex) {
-        var curTask = taskIndex || this.getCurTaskIndex(context);
+        var curTask = _.isUndefined(taskIndex) ? this.getCurTaskIndex(context) : taskIndex;
+        if(_.isUndefined(curTask)) {
+            Log.warn('No cur task');
+            return BTTask.FAILURE;
+        }
 
         // not running
         if(curTask < 0) {
@@ -37,7 +41,7 @@ module.exports = require('BTComposite').extend({
     },
     tick: function(executor, context) {
         // we start the first children, we will continue in childFinish
-        return nextTask(executor, context);
+        return this.nextTask(executor, context);
     },
     childFinish: function(executor, context, child, success) {
         // We check it's the current task
@@ -53,6 +57,6 @@ module.exports = require('BTComposite').extend({
 
         // if not, we launch next task (or finish)
         this.setMemory(context, CUR_TASK, ++curTask);
-        return nextTask(executor, context, curTask);
+        return this.nextTask(executor, context, curTask);
     },
 });

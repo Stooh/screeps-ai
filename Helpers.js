@@ -10,7 +10,7 @@ function parseObject(memo, value, key) {
     var res = Helpers.parse(value);
     if(!_.isNull(res))
         memo[key] = res;
-    return res;
+    return memo;
 };
 
 Helpers.parse = function(toParse) {

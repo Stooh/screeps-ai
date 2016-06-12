@@ -80,7 +80,7 @@ var BTTreeContext = require('Serializable').extend({
             case BTTreeContext.MEM_NODE:
                 this.checkValidNode(node);
 
-                var mem = nodesMemory[node.id];
+                var mem = this.nodesMemory[node.id];
                 if(!mem)
                     return defaultValue;
 

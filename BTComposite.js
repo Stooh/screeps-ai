@@ -4,7 +4,7 @@ module.exports = BTTask.extend({
     constructor: function(tasks) {
         this.base();
         this.tasks = tasks || [];
-        this.tasks.forEach(_setParent, this);
+        this.tasks.forEach(this._setParent, this);
     },
 
     tasks: [],
@@ -20,7 +20,7 @@ module.exports = BTTask.extend({
     hashCode: function() {
         return this.tasks.reduce(
             function(value, task) {
-                return 17 * res + task.hashCode();
+                return 17 * value + task.hashCode();
             },
             this.base());
     },
