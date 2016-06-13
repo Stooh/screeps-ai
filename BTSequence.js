@@ -32,7 +32,7 @@ module.exports = require('BTComposite').extend({
         }
 
         // if we are over the list length, we have finished
-        if(curTask >= this.tasks)
+        if(curTask >= this.tasks.length)
             return BTTask.SUCCESS;
 
         // We start current task
