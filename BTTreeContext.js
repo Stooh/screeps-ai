@@ -18,7 +18,8 @@ var BTTreeContext = require('Serializable').extend({
     sharedMemory: undefined,
 
     onTreeResult: function(result) {
-        // TODO
+        // TODO : transmit to parent node ?
+        this.bb.removeBehaviourTreeContext(this);
     },
 
     getBlackboard: function() {
@@ -27,15 +28,22 @@ var BTTreeContext = require('Serializable').extend({
 
     addActiveNode: function(node) {
         var activeNodes = this.activeNodes;
-        if(_.indexOf(activeNodes, node) < 0)
+        if(_.indexOf(activeNodes, node) < 0) {
             activeNodes.push(node);
+            return true;
+        }
+        return false;
     },
 
     removeActiveNode: function(node) {
         var activeNodes = this.activeNodes;
         var index = activeNodes.indexOf(node);
-        if(index > -1)
+        if(index > -1) {
             activeNodes.splice(index, 1);
+            return true;
+        }
+
+        return false;
     },
 
     getActiveNodes: function() {
@@ -136,18 +144,20 @@ var BTTreeContext = require('Serializable').extend({
 });
 
 BTTreeContext.parse = function(bb, toParse) {
-    if(!bb) {
+    if(!_.isObject(bb)) {
         Log.warn('No blackboard !');
         return null;
     }
 
     var treeName = toParse.treeName;
-    if(!treeName)
+    if(!_.isString(treeName)) {
+        Log.warn('Missing treeName:' + treeName);
         return null;
+    }
 
     // we check the tree exists
     var tree = bb.getBehaviourTree(treeName);
-    if(!tree) {
+    if(_.isUndefined(tree)) {
         Log.warn('No tree with name ' + treeName);
         return null;
     }

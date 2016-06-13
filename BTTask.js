@@ -14,7 +14,7 @@ var BTTask = require('Base').extend({
     getMemory: function(context, key) { return context.getNodeMemory(this, key); },
     setSharedMemory: function(context, key, value) { return context.setSharedMemory(key, value); },
     getSharedMemory: function(context, key) { return context.getSharedMemory(key); },
-    hashCode: function() { return this.constructor.name.hashCode(); },
+    hashCode: function() { return this.constructor.name.hashCode(); }, // FIXME : toujours 0 car constructor.name = ''
     generateUniqueIdsRecursive: function(id) {
         return this.id = id || 0;
     },

@@ -1,7 +1,7 @@
 var Log = require('Log');
 var BTTask = require('BTTask');
 
-module.exports = require('BTRepeat').extend({
+module.exports = require('BTDecorator').extend({
     constructor: function(task) {
         this.base(task);
     },
@@ -12,6 +12,7 @@ module.exports = require('BTRepeat').extend({
             return BTTask.FAILURE;
 
         // if not we continue
-        return this.base(executor, context, child, success);
+        executor.start(this.task, context);
+        return BTTask.WAITING;
     },
 });

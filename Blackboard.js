@@ -35,10 +35,6 @@ Blackboard.prototype.getBehaviourTree = function(label) {
     return this.behaviourTrees[label];
 };
 
-Blackboard.prototype.getBehaviourTreeContextsMemory = function() {
-    return this.btContextsMem;
-};
-
 Blackboard.prototype.getBehaviourTreeContexts = function() {
     return this.btContexts;
 };
@@ -60,6 +56,16 @@ Blackboard.prototype.startBehaviourTree = function(treeName, executor) {
     executor.start(tree.root, res);
 
     return res;
+};
+
+Blackboard.prototype.removeBehaviourTreeContext = function(context) {
+    var btContexts = this.btContexts;
+    var index = _.indexOf(btContexts, context);
+    if (index > -1) {
+        btContexts.splice(index, 1);
+        return true;
+    }
+    return false;
 };
 
 Blackboard.prototype.parse = function(value) {

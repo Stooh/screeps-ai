@@ -6,9 +6,17 @@ module.exports = require('BTDecorator').extend({
         this.base(task);
     },
 
-    childFinish: function(executor, context, child, success) {
-        // We launch it again
+    start: function(executor, context) {
+        // we do not start it now
+    },
+
+    tick: function(executor, context) {
         executor.start(this.task, context);
         return BTTask.WAITING;
+    },
+
+    childFinish: function(executor, context, child, success) {
+        // We launch it again next tick
+        return BTTask.RUNNING;
     },
 });
